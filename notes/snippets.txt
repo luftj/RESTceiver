@@ -1,0 +1,36 @@
+# vlc make snapshot image (doesn't work on m3u8?)
+# https://wiki.videolan.org/VLC_HowTo/Make_thumbnails/
+vlc https://tagesschau-lh.akamaihd.net/i/tagesschau_3@66339/master.m3u8 --rate=1 --video-filter=scene --vout=dummy --aout=dummy --start-time=20 --stop-time=21 --scene-format=png --scene-ratio=24 --scene-prefix=snap --scene-path=. vlc://quit
+# ffmpeg snapshot/thumbnails
+ffmpeg -i "https://brlive-lh.akamaihd.net/i/bralpha_germany@119899/index_6_av-p.m3u8?sd=10&rebase=ons" -vframes 1 -vsync 0 thumbnai
+ls3.png
+#-ss 0.5: point of movie to extract from (ie seek to 0.5 seconds; you can also use HH:MM:SS.ZZZZ sexagesimal format)
+#-s 480x300: frame size of image to output (image resized to fit dimensions)
+#-f image2: forces format
+
+# vlc mosaicing, e.g. for previews
+# https://wiki.videolan.org/VLC_HowTo/Make_a_mosaic/
+#./vlc --color -I telnet --vlm-conf --mosaic-width=360 --mosaic-height=288 --mosaic-keep-picture --mosaic-rows=2 --mosaic-cols=2 --mosaic-position=1 --mosaic-order=1,2,3,4 ../mosaic.vlm.conf --ttl 12 --udp-caching 800
+vlc --color --vlm-conf --mosaic-width=360 --mosaic-height=288 --mosaic-keep-picture --mosaic-rows=1 --mosaic-cols=2 --mosaic-position=1 --mosaic-order=1,2 mosaictest.vlm --ttl 12
+
+# ffmpeg mosaic (works!)
+ffmpeg -i "https://brlive-lh.akamaihd.net/i/bralpha_germany@119899/index_6_av-p.m3u8?sd=10&rebase=ons"  
+-i "https://tagesschau-lh.akamaihd.net/i/tagesschau_3@66339/index_184_av-p.m3u8?sd=10&rebase=on"  
+-i "https://tagesschau-lh.akamaihd.net/i/tagesschau_3@66339/index_184_av-p.m3u8?sd=10&rebase=on" 
+-i "https://brlive-lh.akamaihd.net/i/bralpha_germany@119899/index_6_av-p.m3u8?sd=10&rebase=ons"  
+-filter_complex "nullsrc=size=640x480 [base]; [0:v] setpts=PTS-STARTPTS, scale=320x240 [upperleft]; [1:v] setpts=PTS-STARTPTS, scale=320x240 [upperright]; [2:v] setpts=PTS-STARTPTS, scale=320x240 [lowerleft]; [3:v] setpts=PTS-STARTPTS, scale=320x240 [lowerright]; [base][upperleft] overlay=shortest=1 [tmp1]; [tmp1][upperright] overlay=shortest=1:x=320 [tmp2]; [tmp2][lowerleft] overlay=shortest=1:y=240 [tmp3]; [tmp3][lowerright] overlay=shortest=1:x=320:y=240" 
+-an # no audio
+-c:v libx264 -vcodec mpeg4 
+# for stream: -f mpegts udp://127.0.0.1:23000
+    # vlc udp://@:23000 # open ffmpeg stream
+    # ffplay udp://127.0.0.1:23000 # less stutter then with vlc
+# for file: output.mkv
+-f matroska - | ffplay - # pipe  video directly into ffplay or vlc
+
+# text overlay
+ffmpeg -i input.mp4 -vf drawtext="fontfile=/path/to/font.ttf: \
+text='Stack Overflow': fontcolor=white: fontsize=24: box=1: boxcolor=black@0.5: \
+boxborderw=5: x=(w-text_w)/2: y=(h-text_h)/2" -codec:a copy output.mp4
+
+# ffplay
+ffplay -fs # fullscreen

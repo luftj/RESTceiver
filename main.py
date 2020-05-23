@@ -1,4 +1,4 @@
-#!/bin/python
+#!/bin/python3
 
 import subprocess
 from time import sleep
@@ -37,7 +37,7 @@ def test_run():
 
     print("Running...")
     stream_url = get_stream_url(channel)
-    vlc_process = subprocess.Popen(["cvlc", stream_url])
+    vlc_process = subprocess.Popen(["cvlc", "fullscreen", stream_url])
     print("wait...")
     return render_template("channel_selector.html", channels = get_stream_list())
 

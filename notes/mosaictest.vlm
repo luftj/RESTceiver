@@ -1,0 +1,15 @@
+new channel1 broadcast enabled                                                       
+setup channel1 input https://brlive-lh.akamaihd.net/i/bralpha_germany@119899/index_6_av-p.m3u8?sd=10&rebase=ons
+setup channel1 output #duplicate{dst=mosaic-bridge{id=1,height=366}} 
+                                            
+new channel2 broadcast enabled                                                       
+setup channel2 input https://tagesschau-lh.akamaihd.net/i/tagesschau_3@66339/index_184_av-p.m3u8?sd=10&rebase=on
+setup channel2 output #duplicate{dst=mosaic-bridge{id=2,height=366}}
+
+new mosaic broadcast enabled
+setup mosaic input file:///home/pax/P1010330.JPG
+setup mosaic output #transcode{sfilter=mosaic,vcodec=mp4v,VB=20000,acodec=none,fps=15,scale=1}:display
+
+control mosaic play
+control channel1 play
+control channel2 play
