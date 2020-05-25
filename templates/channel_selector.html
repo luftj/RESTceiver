@@ -1,7 +1,10 @@
 <!doctype html>
 <title>Hailing up the selector!</title>
-<form action="test" method="post">
+<form action="select" method="post">
     {% for item in channels %}
     <button type="submit" name="channel" value={{item}}>{{item}}</button> <br/>
     {% endfor %}
+</form>
+<form action="preview">
+    <button type="submit">Vorschau</button> <br/>
 </form>

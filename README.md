@@ -18,6 +18,12 @@ Requires
 
 Make sure, `cvlc` (vlc with dummy interface) is callable from shell (i.e. in `/bin/`) or set in `PATH` and you have a running internet connection.
 
+You can make the app autostart on reboot by adding 
+
+```@reboot /usr/bin/python3 /path/to/RESTceiver/main.py & ```
+
+to `crontab -e`
+
 ## Usage
 
 This code is intended to run on a device (e.g. a Raspberry Pi) attached to a TV screen, where there is no access to cable or DVB-T/DVB-S antennas, but broadband internet.
@@ -41,7 +47,7 @@ This device (playback device) will continuously play live TV streams (just like 
 
 ## Configuration
 
-Channels are supplied in the [configuration file](config.json) with a name and their address. HTTP, RMTP, or anything else compatible with ffmpeg will work.
+Channels are supplied in the [configuration file](config.json) with a name and their address. HTTP, RMTP, or anything else readable by ffmpeg will work.
 
 ## Known issues
 

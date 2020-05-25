@@ -15,6 +15,7 @@ vlc --color --vlm-conf --mosaic-width=360 --mosaic-height=288 --mosaic-keep-pict
 # here for HLS: https://ackspace.nl/wiki/VLC_mosaic_config
 
 # ffmpeg mosaic (works!)
+# https://trac.ffmpeg.org/wiki/Create%20a%20mosaic%20out%20of%20several%20input%20videos
 ffmpeg -i "https://brlive-lh.akamaihd.net/i/bralpha_germany@119899/index_6_av-p.m3u8?sd=10&rebase=ons" -i "https://tagesschau-lh.akamaihd.net/i/tagesschau_3@66339/index_184_av-p.m3u8?sd=10&rebase=on" -i "https://tagesschau-lh.akamaihd.net/i/tagesschau_3@66339/index_184_av-p.m3u8?sd=10&rebase=on" -i "https://brlive-lh.akamaihd.net/i/bralpha_germany@119899/index_6_av-p.m3u8?sd=10&rebase=ons" -filter_complex "nullsrc=size=640x480 [base]; [0:v] setpts=PTS-STARTPTS, scale=320x240 [upperleft]; [1:v] setpts=PTS-STARTPTS, scale=320x240 [upperright]; [2:v] setpts=PTS-STARTPTS, scale=320x240 [lowerleft]; [3:v] setpts=PTS-STARTPTS, scale=320x240 [lowerright]; [base][upperleft] overlay=shortest=1 [tmp1]; [tmp1][upperright] overlay=shortest=1:x=320 [tmp2]; [tmp2][lowerleft] overlay=shortest=1:y=240 [tmp3]; [tmp3][lowerright] overlay=shortest=1:x=320:y=240" -an -c:v libx264 -vcodec mpeg4 -f matroska - | ffplay - # pipe  video directly into ffplay or vlc
 # for stream: -f mpegts udp://127.0.0.1:23000
     # vlc udp://@:23000 # open ffmpeg stream
