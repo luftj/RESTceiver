@@ -20,7 +20,7 @@ Make sure, `cvlc` (vlc with dummy interface) is callable from shell (i.e. in `/b
 
 You can make the app autostart on reboot by adding 
 
-```@reboot /usr/bin/python3 /path/to/RESTceiver/main.py & ```
+```@reboot DISPLAY=:0 /usr/bin/python3 /path/to/RESTceiver/main.py & ```
 
 to `crontab -e`
 
