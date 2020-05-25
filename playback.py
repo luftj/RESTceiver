@@ -1,5 +1,6 @@
 #!/bin/python3
 import math
+import os
 
 def mosaic(inputs, output_size, texts=None):
     command = "ffmpeg "
@@ -10,7 +11,9 @@ def mosaic(inputs, output_size, texts=None):
     command += "%dx%d" % output_size # total size of output video
     command += "[tmp0];" # base target
 
-    font = "fontfile=./Inconsolata-Bold.ttf" # get font. Shipped with repo for convenience
+    path = os.path.dirname(os.path.abspath(__file__))
+    path += "/Inconsolata-Bold.ttf"
+    font = "fontfile=%s" % path # get font. Shipped with repo for convenience
     part_size = (int(output_size[0] / math.ceil(len(inputs) / 2)), 
                  int(output_size[1] / math.floor(len(inputs) / 2))) # size for each subvideo
 
@@ -53,5 +56,4 @@ if __name__ == "__main__":
     texts = ["ard-alpha","tagesschau24","3sat","arte"]
     output_size = (640,480)
     command = mosaic(inputs,output_size,texts)
-    import os
     os.system(command)

@@ -4,18 +4,21 @@ import subprocess
 from time import sleep
 import json
 from flask import Flask, render_template, request
-from playback import * 
+from playback import *
+import os
 
 app = Flask(__name__)
 vlc_process = None
 
+configpath = os.path.dirname(os.path.abspath(__file__)) + "/config.json"
+
 def get_stream_url(channel):
-    with open("config.json") as urls_file:
+    with open(configpath) as urls_file:
         urls_json = json.load(urls_file)
         return urls_json[channel]
 
 def get_stream_list():
-    with open("config.json") as urls_file:
+    with open(configpath) as urls_file:
         urls_json = json.load(urls_file)
         result =  list(urls_json.keys())
         print(result)
@@ -55,6 +58,7 @@ def preview():
     output_size = (1920,1080)
     command = mosaic(inputs,output_size,texts)
     vlc_process = subprocess.Popen(command, shell=True)
+    print(vlc_process)
 
     return render_template("channel_selector.html", channels = get_stream_list())
 

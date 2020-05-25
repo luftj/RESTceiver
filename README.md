@@ -56,6 +56,7 @@ Channels are supplied in the [configuration file](config.json) with a name and t
     ``` curl http://sometvstation/master.m3u8 ```
 
 * switching channels takes a couple of seconds
+* preview player is not killed automatically. [Possible solution](https://stackoverflow.com/questions/4789837/how-to-terminate-a-python-subprocess-launched-with-shell-true)
 
 ## License notes
 
