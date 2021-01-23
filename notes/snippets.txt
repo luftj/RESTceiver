@@ -29,3 +29,5 @@ boxborderw=5: x=(w-text_w)/2: y=(h-text_h)/2" -codec:a copy output.mp4
 
 # ffplay
 ffplay -fs # fullscreen
+
+ffprobe -print_format json -show_format -show_streams -show_error https://mcdn.daserste.de/daserste/de/master.m3u8

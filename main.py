@@ -57,7 +57,7 @@ def preview():
     inputs = [get_stream_url(ch) for ch in texts]
     output_size = (1920,1080)
     command = mosaic(inputs,output_size,texts)
-    vlc_process = subprocess.Popen(command, shell=True)
+    vlc_process = subprocess.Popen("exec " + command, shell=True)
     print(vlc_process)
 
     return render_template("channel_selector.html", channels = get_stream_list())

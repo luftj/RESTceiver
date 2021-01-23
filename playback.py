@@ -19,7 +19,7 @@ def mosaic(inputs, output_size, texts=None):
 
     for index,input in enumerate(inputs):
         command += "[%d:v] " % index # input target
-        # command += "setpts=PTS-STARTPTS, "
+        command += "setpts=PTS-STARTPTS, "
         command += "scale="+"x".join(map(str,part_size)) # target scale
 
         if texts:
@@ -47,13 +47,55 @@ def mosaic(inputs, output_size, texts=None):
     command += "-an " # no sound
     command += "-c:v libx264 -vcodec mpeg4 -f matroska - | ffplay -"
     return command
+
+import json
+configpath = os.path.dirname(os.path.abspath(__file__)) + "/config.json"
+
+def get_stream_url(channel):
+    with open(configpath) as urls_file:
+        urls_json = json.load(urls_file)
+        return urls_json[channel]
+
+def get_stream_list():
+    with open(configpath) as urls_file:
+        urls_json = json.load(urls_file)
+        result =  list(urls_json.keys())
+        print(result)
+        return result
+
+def get_bitrate_stream(master_url, bitrate="lowest"):
+    import requests
+    r = requests.get(master_url)
+    if r.status_code == 200:
+        lines = r.text.split("\n")
+        min_bandwith = [1000000000,""]
+        for idx,line in enumerate(lines):
+            if line.startswith("#EXT-X-STREAM-INF"):
+                infos = line.split(",")
+                bandwith = int([x for x in infos if ("BANDWIDTH") in x][0].split("=")[-1])
+                if bandwith < min_bandwith[0]:
+                    if lines[idx+1].startswith("http"):
+                        url = (lines[idx+1])
+                    else:
+                        url = "".join(master_url.rsplit('/', 1)[0])
+                        url += "/"+lines[idx+1]
+                    min_bandwith = [bandwith, url]
+        return min_bandwith
+    else:
+        print("error getting stream",r.status_code)
     
 if __name__ == "__main__":
-    inputs = ["https://brlive-lh.akamaihd.net/i/bralpha_germany@119899/index_6_av-p.m3u8?sd=10&rebase=ons",
+    inputs = ["https://brlive-lh.akamaihd.net/i/bralpha_germany@119899/index_6_av-p.m3u8?sd=10&rebase=on",
     "https://tagesschau-lh.akamaihd.net/i/tagesschau_3@66339/index_184_av-p.m3u8?sd=10&rebase=on",
     "https://zdfhls18-i.akamaihd.net/hls/live/744751/dach/1/1.m3u8",
-    "https://artelive-lh.akamaihd.net/i/artelive_de@393591/index_5_av-p.m3u8?sd=10&rebase=on"]
-    texts = ["ard-alpha","tagesschau24","3sat","arte"]
+    "https://artelive-lh.akamaihd.net/i/artelive_de@393591/index_5_av-p.m3u8?sd=10&rebase=on",
+    "https://mcdn.daserste.de/daserste/de/master_184.m3u8"]
+    texts = ["ard-alpha","tagesschau24","3sat","arte","ard"]
     output_size = (640,480)
-    command = mosaic(inputs,output_size,texts)
-    os.system(command)
+    inputs = []
+    for ch in get_stream_list():
+        url = get_stream_url(ch)
+        inputs.append(get_bitrate_stream(url)[1])
+    print(*inputs,sep="\n")
+    # command = mosaic(inputs,output_size,texts)
+    # os.system(command)
