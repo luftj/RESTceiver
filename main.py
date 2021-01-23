@@ -3,7 +3,7 @@
 import subprocess
 from time import sleep
 import json
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, url_for
 from playback import *
 import os
 
@@ -35,7 +35,9 @@ def select():
         print("Kill!")
         vlc_process.kill()
 
-    channel = request.form["channel"]
+    channel = request.form.get("channel",None)
+    if not channel:
+        return redirect(url_for("root"))
     channel = channel.lower()
     print("requested channel",channel)
 
