@@ -43,7 +43,7 @@ def select():
 
     print("Running...")
     stream_url = get_stream_url(channel)
-    vlc_process = subprocess.Popen(["cvlc", "--fullscreen", stream_url])
+    vlc_process = subprocess.Popen(["ffplay", "-fs", stream_url])
     print("wait...")
     return render_template("channel_selector.html", channels = get_stream_list())
 
